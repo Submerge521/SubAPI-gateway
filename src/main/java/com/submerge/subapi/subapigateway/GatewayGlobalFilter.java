@@ -14,10 +14,13 @@ import com.submerge.subapicommon.model.vo.UserVO;
 import com.submerge.subapicommon.service.inner.InnerInterfaceInfoService;
 import com.submerge.subapicommon.service.inner.InnerUserInterfaceInfoService;
 import com.submerge.subapicommon.service.inner.InnerUserService;
+import jodd.net.URLCoder;
+import jodd.net.URLDecoder;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.dubbo.config.annotation.DubboReference;
 import org.bouncycastle.util.Strings;
+import org.bouncycastle.util.encoders.UTF8;
 import org.reactivestreams.Publisher;
 import org.springframework.cloud.gateway.filter.GatewayFilterChain;
 import org.springframework.cloud.gateway.filter.GlobalFilter;
@@ -58,7 +61,8 @@ public class GatewayGlobalFilter implements GlobalFilter, Ordered {
     /**
      * 请求白名单
      */
-    private final static List<String> WHITE_HOST_LIST = Arrays.asList("127.0.0.1", "101.43.61.87");
+//    private final static List<String> WHITE_HOST_LIST = Arrays.asList("127.0.0.1", "101.43.61.87");
+    private final static List<String> WHITE_HOST_LIST = List.of("127.0.0.1");
     /**
      * 五分钟过期时间
      */
@@ -95,13 +99,13 @@ public class GatewayGlobalFilter implements GlobalFilter, Ordered {
      */
     private Mono<Void> verifyParameters(ServerWebExchange exchange, GatewayFilterChain chain) {
         ServerHttpRequest request = exchange.getRequest();
-        // 请求白名单
-        // if (!WHITE_HOST_LIST.contains(getIp(request))) {
-        //     throw new BusinessException(ErrorCode.FORBIDDEN_ERROR);
-        // }
-
+////         请求白名单
+//         if (WHITE_HOST_LIST.contains(getIp(request))) {
+//             throw new BusinessException(ErrorCode.FORBIDDEN_ERROR);
+//         }
         HttpHeaders headers = request.getHeaders();
         String body = headers.getFirst("body");
+//        String body = URLDecoder.decode(Objects.requireNonNull(headers.getFirst("body")), "utf-8");
         String accessKey = headers.getFirst("accessKey");
         String timestamp = headers.getFirst("timestamp");
         String sign = headers.getFirst("sign");
